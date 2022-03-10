@@ -7,44 +7,29 @@
 from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 
-dict = {"Abruzzo":"L'Aquila", "Basilicata":"Potenza", "Calabria":"Catanzaro", "Campania":"Napoli", "Emilia-Romagna":"Bologna", "Friuli-Venezia Giulia":"Trieste", "Lazio":"Roma", "Liguria":"Genova", "Lombardia":"Milano", "Marche":"Ancona", "Molise":"Campobasso", "Piemonte":"Torino", "Puglia":"Bari", "Sardegna":"Cagliari", "Sicilia":"Palermo", "Toscana":"Firenze", "Trentino-Alto Adige":"Trento", "Umbria":"Perugia", "Valle d'Aosta":"Aosta", "Veneto":"Venezia"}
-key_list = list(dict.keys())
-values_list = list(dict.values())
-
-def get_key(val):
-    for key, value in dict.items():
-         if val == value:
-             return key
+capoluoghiRegione = {"Abruzzo":"L'Aquila", "Basilicata":"Potenza", "Calabria":"Catanzaro", "Campania":"Napoli", "Emilia-Romagna":"Bologna", "Friuli-Venezia Giulia":"Trieste", "Lazio":"Roma", "Liguria":"Genova", "Lombardia":"Milano", "Marche":"Ancona", "Molise":"Campobasso", "Piemonte":"Torino", "Puglia":"Bari", "Sardegna":"Cagliari", "Sicilia":"Palermo", "Toscana":"Firenze", "Trentino-Alto Adige":"Trento", "Umbria":"Perugia", "Valle d'Aosta":"Aosta", "Veneto":"Venezia"}
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('home_es3.html')
+    return render_template('indexcapo.html')
 
-@app.route('/capreg', methods=['GET'])
-def capreg():
-    return render_template('capreg.html')
 
-@app.route('/capreg1', methods=['GET'])
-def capreg1():
-    name = request.args['name']
-    if name not in key_list:
-        return render_template("errore_es3.html", errore = "Regione non trovata")
-    else:
-        d = dict[name]
-    return render_template('capregf.html', d = d)
-
-@app.route('/regcap', methods=['GET'])
-def regcap():
-    return render_template('regcap.html')
-
-@app.route('/regcap1', methods=['GET'])
-def regcap1():
-    name = request.args['name']
-    if name not in values_list:
-        return render_template("errore_es3.html", errore = "Capoluogo non trovato")
-    else:
-        d = get_key(name)
-    return render_template("regcapf.html", d = d)
+@app.route('/risp', methods=['GET'])
+def risp():
+    indice = request.args['indice']
+    radio = request.args['sel']
+    if radio == 'regione':
+        if indice in capoluoghiRegione:
+            capo = capoluoghiRegione[indice]
+            return render_template('indexcapo1.html', capol=capo)
+        return render_template('error.html')
+    if radio == 'capoluogo':
+        dct = {v: k for k, v in capoluoghiRegione.items()}
+        if indice in dct:
+            capo = dct[indice]
+            return render_template('indexcapo1.html', capol=capo)
+        return render_template('error.html')
+    return render_template('error.html')
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=3246, debug=True)
